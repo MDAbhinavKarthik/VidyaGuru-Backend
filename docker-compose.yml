@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: vidyaguru-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://vidyaguru:vidyaguru_secret@postgres:5432/vidyaguru_db
+      - REDIS_URL=redis://redis:6379/0
+      - SECRET_KEY=development_secret_key_change_in_prod
+      - ENVIRONMENT=development
+    volumes:
+      - .:/app
+      - /app/venv
+    depends_on:
+      - postgres
+      - redis
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: vidyaguru-postgres
+    environment:
+      POSTGRES_USER: vidyaguru
+      POSTGRES_PASSWORD: vidyaguru_secret
+      POSTGRES_DB: vidyaguru_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    container_name: vidyaguru-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+volumes:
+  postgres_data:
+  redis_data:

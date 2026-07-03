@@ -1,0 +1,35 @@
+# Python / Virtual Environment
+venv/
+.venv/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+*.log
+
+# Environment & Secrets
+.env
+.env.local
+.env.*.local
+credentials/*.key
+credentials/*.pem
+credentials/*.secret
+
+# Databases
+*.db
+*.sqlite3
+*.db-journal
+
+# IDEs & OS
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+generated_artifacts/*
+!generated_artifacts/.gitkeep

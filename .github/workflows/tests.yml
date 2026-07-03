@@ -1,0 +1,37 @@
+name: VidyaGuru Backend CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12"]
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+        cache: 'pip'
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    - name: Run Pycompile check
+      run: |
+        python -m py_compile main.py
+        find controllers models services core schemas -name "*.py" -exec python -m py_compile {} +
+    - name: Run Pytest
+      env:
+        SECRET_KEY: test_secret_key_ci
+        DATABASE_URL: sqlite+aiosqlite:///./test_ci.db
+        PYTHONPATH: .
+      run: |
+        pytest
